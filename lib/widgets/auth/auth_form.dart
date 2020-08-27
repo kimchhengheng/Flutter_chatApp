@@ -1,57 +1,88 @@
+import 'dart:io';
 import 'package:flutter/material.dart';
+import '../pickers/user_image_picker.dart';
 enum AuthMode {SignUp,SignIn}
 
 class AuthForm extends StatefulWidget {
+  bool isloading;
+  Function handleform;
+
+  AuthForm(this.handleform, this.isloading);
+
   @override
   _AuthFormState createState() => _AuthFormState();
 }
 
 class _AuthFormState extends State<AuthForm> {
   final _form = GlobalKey<FormState>();
-  var _pwcontroller = TextEditingController();
+  String _email;
+  String _username;
+  String _password;
+  File _image;
+//  var _pwcontroller = TextEditingController();
   AuthMode authmode= AuthMode.SignIn;
-  var _formdata = {};
+
 
 
   @override
   void dispose() {
     // TODO: implement dispose
-    _pwcontroller.dispose();
+//    _pwcontroller.dispose();
     super.dispose();
   }
+  void setimage(File img){
+    setState(() {
+      _image = img;
+    });
+  }
   void saveform(){
+
     bool valid = _form.currentState.validate();
+    FocusScope.of(context).unfocus();
+//    print(_image); we have to set state since it is stateful widget and affect the ui data
+//    R
     if(!valid)
       return;
     _form.currentState.save();
-    print(_formdata);
+
+    widget.handleform(
+        _email.trim(),
+        _username == null?_username: _username.trim(),
+        _password.trim(),
+        _image,
+        context);
   }
   void toggleSignUpSignIn(){
+    FocusScope.of(context).unfocus();
+    _form.currentState.reset();
+//    print('before set state'); so it finish this method first then call build since it is setstate, not consider about the await and async
     if(authmode == AuthMode.SignIn){
+
       setState(() {
         // the value from sigin keep in sign up
-        _form.currentState.reset();
-        _pwcontroller.clear();
+
+//        _pwcontroller.clear();
         authmode = AuthMode.SignUp;
       });
     }
     else{
       setState(() {
-        _form.currentState.reset();
-        _pwcontroller.clear();
+
+//        _pwcontroller.clear();
         authmode = AuthMode.SignIn;
       });
     }
+//    print('after set state');
   }
   @override
   Widget build(BuildContext context) {
 //    var height = MediaQuery.of(context).size.height;
-
+//    print('build');
     return Center(
       child: AnimatedContainer(
           duration: Duration(milliseconds: 400),
           curve: Curves.fastOutSlowIn,
-          height: authmode == AuthMode.SignUp? 440 : 380,
+          height: authmode == AuthMode.SignUp? 440 : 320,
 //          constraints: BoxConstraints(
 //            minHeight: min()
 //          ),
@@ -67,8 +98,10 @@ class _AuthFormState extends State<AuthForm> {
                 child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children:<Widget>[
-                      TextFormField(
-
+                      if(authmode==AuthMode.SignUp)
+                        UserImagePicker(setimage),
+                        TextFormField(
+                        key: ValueKey('email'),
                         keyboardType: TextInputType.emailAddress,
                         decoration: InputDecoration(
                           labelText: "Email"
@@ -82,10 +115,12 @@ class _AuthFormState extends State<AuthForm> {
                           return null;
                         },
                         onSaved: (value){
-                          _formdata['email']=value;
+                          _email=value;
                         },
                       ),
+                      if(authmode==AuthMode.SignUp)
                       TextFormField(
+                        key: ValueKey('username'),
                         decoration: InputDecoration(
                           labelText: 'Username'
                         ),
@@ -95,11 +130,12 @@ class _AuthFormState extends State<AuthForm> {
                           return null;
                         },
                         onSaved: (value){
-                          _formdata['username']=value;
+                          _username=value;
                         },
                       ),
                       TextFormField(
-                        controller: _pwcontroller,
+                        key: ValueKey('password'),
+//                        controller: _pwcontroller,
                         obscureText: true,
                         decoration: InputDecoration(
                           labelText: 'Password'
@@ -107,39 +143,41 @@ class _AuthFormState extends State<AuthForm> {
                         validator: (value) {
                           if(value.isEmpty)
                             return 'Please input the password';
-                          if(value.length <7)
+                          if(value.length <6)
                             return 'password length have to be at least 7 character';
                           return null;
                         },
                         onSaved: (value){
-                          _formdata['password']=value;
+                          _password=value;
                         },
                       ),
-                      if(authmode==AuthMode.SignUp)
-                        TextFormField(
-                          obscureText: true,
-                          decoration: InputDecoration(
-                              labelText: 'Confirm Password'
-                          ),
-                          validator: (value) {
-                            if(value.isEmpty)
-                              return 'Please input the password';
-                            if(value != _pwcontroller.text)
-                              return 'password does not match';
-                            return null;
-                          },
-
-                        ),
+//                      if(authmode==AuthMode.SignUp)
+//                        TextFormField(
+//                          obscureText: true,
+//                          decoration: InputDecoration(
+//                              labelText: 'Confirm Password'
+//                          ),
+//                          validator: (value) {
+//                            if(value.isEmpty)
+//                              return 'Please input the password';
+//                            if(value != _pwcontroller.text)
+//                              return 'password does not match';
+//                            return null;
+//                          },
+//
+//                        ),
                       SizedBox(height: 12,),
-                      RaisedButton(
-                        child: authmode == AuthMode.SignIn?Text('Sign In'): Text('Sign Up'),// would change between login and sign up
-                        onPressed: (){
-                          saveform();
-//                          Scaffold.of(context).showSnackBar(SnackBar(
-//                            content: Text('$authmode'),
-//                          ));
-                        },
-                      ),
+
+
+                        RaisedButton(
+                          child: widget.isloading? CircularProgressIndicator(): (authmode == AuthMode.SignIn?Text('Sign In'): Text('Sign Up')),// would change between login and sign up
+                          onPressed: (){
+                            saveform();
+  //                          Scaffold.of(context).showSnackBar(SnackBar(
+  //                            content: Text('$authmode'),
+  //                          ));
+                          },
+                        ),
                       FlatButton(
                         child:authmode == AuthMode.SignIn? Text('Create new account') :Text('Sign In'),// would toggle between the sign in page and sign up page
                         onPressed: (){toggleSignUpSignIn();} ,

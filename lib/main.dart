@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'screen/chat_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -26,11 +27,23 @@ class MyApp extends StatelessWidget {
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         )
       ),
-//      home: ChatScreen(),
-      routes: {
-        "/": (ctx)=> AuthScreen(),
+      home: StreamBuilder(
+        stream: FirebaseAuth.instance.authStateChanges(), // this listen to change of firebaseAuth login logout sign up
+        builder: (context, snapshot) {
+          if(snapshot.hasData){
+            return ChatScreen() ;
+          }
+          else{
+            return  AuthScreen();
+          }
+        },
+      )
 
-      },
+    // should check if auth or then render different thing
+//      routes: {
+//        "/": (ctx)=> ,
+//
+//      },
     );
   }
 }
