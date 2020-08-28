@@ -3,6 +3,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 class NewMessage extends StatefulWidget {
+  final String chatId;
+
+  NewMessage(this.chatId);
+
   @override
   _NewMessageState createState() => _NewMessageState();
 }
@@ -27,12 +31,13 @@ class _NewMessageState extends State<NewMessage> {
     super.dispose();
   }
   Future<void> _sendMessage()async{
+      print(widget.chatId);
 
       FocusScope.of(context).unfocus();
       final _authuser =await FirebaseAuth.instance.currentUser;
       final userData =await FirebaseFirestore.instance.collection('Users').doc(_authuser.uid).get();
 //      print(userData.data()['username']); // .get is get documentsnapshot . Data return Map which allow to get the value like list
-      FirebaseFirestore.instance.collection('chat/38dwl4yzw34rcClHY8jS/messages').add({ // add would create auto id
+      FirebaseFirestore.instance.collection('chat/${widget.chatId}/messages').add({ // add would create auto id
                   'text': _textcontroller.text,
                   'timestamp': Timestamp.now(),
                   'useruid': _authuser.uid,
@@ -43,6 +48,7 @@ class _NewMessageState extends State<NewMessage> {
   }
   @override
   Widget build(BuildContext context) {
+
     return Container(
       width: double.infinity,
       child: Row(

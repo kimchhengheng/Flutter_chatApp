@@ -39,8 +39,11 @@ class _AuthFormState extends State<AuthForm> {
 
     bool valid = _form.currentState.validate();
     FocusScope.of(context).unfocus();
+    if(authmode == AuthMode.SignUp && _image == null){
+      Scaffold.of(context).showSnackBar(SnackBar(content: Text("Please input the image") , backgroundColor: Theme.of(context).errorColor,));
+    }
 //    print(_image); we have to set state since it is stateful widget and affect the ui data
-//    R
+//
     if(!valid)
       return;
     _form.currentState.save();

@@ -18,6 +18,7 @@ class _AuthScreenState extends State<AuthScreen> {
   bool _isloading=false;
 
   Future _handlesaveform(String userEmail, String username, String userPassword, File imagefile, BuildContext ctx) async {
+
     FirebaseAuth _auth= FirebaseAuth.instance;
     UserCredential _response;
     try{
@@ -43,6 +44,9 @@ class _AuthScreenState extends State<AuthScreen> {
           'imageurl': _imageurl,
         });
       }
+      setState(() {
+        _isloading=false;
+      });
 
     } on PlatformException catch(error){
       if(error.message !=null){
@@ -51,17 +55,19 @@ class _AuthScreenState extends State<AuthScreen> {
               content: Text(error.message),
               backgroundColor: Theme.of(ctx).errorColor,
             ));
+        setState(() {
+          _isloading=false;
+        });
       }
 
     }
     catch(error){
       print(error);
-    }
-    finally{
       setState(() {
         _isloading=false;
       });
     }
+
 
 }
   @override

@@ -1,3 +1,4 @@
+import 'package:chat_app/screen/all_user_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'screen/chat_screen.dart';
@@ -31,7 +32,7 @@ class MyApp extends StatelessWidget {
         stream: FirebaseAuth.instance.authStateChanges(), // this listen to change of firebaseAuth login logout sign up
         builder: (context, snapshot) {
           if(snapshot.hasData){
-            return ChatScreen() ;
+            return DisplayUser(); //ChatScreen() ;
           }
           else{
             return  AuthScreen();

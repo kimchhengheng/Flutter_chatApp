@@ -10,6 +10,10 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 
 class ChatScreen extends StatelessWidget {
+  final String chatId ;
+
+  ChatScreen(this.chatId);
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -40,9 +44,9 @@ class ChatScreen extends StatelessWidget {
         child: Column(
           children: [
             Expanded(
-              child: Messages(),
+              child: Messages(chatId),
             ),
-            NewMessage(),
+            NewMessage(chatId),
           ],
         ),
       )
