@@ -27,6 +27,7 @@ class DisplayUser extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+//    print('all user builder');
     return Scaffold(
         appBar: AppBar(title: Text("All users"),
         actions: [
@@ -57,25 +58,39 @@ class DisplayUser extends StatelessWidget {
             return  Center(child: CircularProgressIndicator(),);
           }
           var userdoc = snapshot.data.docs;
+          List<QueryDocumentSnapshot> availbleuser =[];
+
+          for(var  i=0;i < userdoc.length ; i++){
+            if(currentuser.uid !=userdoc[i].documentID){
+              availbleuser.add(userdoc[i]);
+            }
+          }
+
           return (userdoc.length ==1 && currentuser.uid == userdoc[0].documentID)? Center(child: Text("No user to message"),): ListView.builder(
-            itemCount: userdoc.length,
+            itemCount:availbleuser.length,
             itemBuilder: (context, index) {
 //              print(userdoc[index].get('username'));
             // display should exclude your self from list
-              return (currentuser.uid != userdoc[index].documentID) ? ListTile(
+//              print(currentuser.uid != userdoc[index].documentID);
+//              print('listview builder');
+//              print(index);
+//              if(currentuser.uid == userdoc[index].documentID )
+//                return null;
+//              print(userdoc[index]);
+              return ListTile(
                 leading: CircleAvatar(
-                  backgroundImage: NetworkImage(userdoc[index].get('imageurl')),
+                  backgroundImage: NetworkImage(availbleuser[index].get('imageurl')),
                 ),
-                title: Text(userdoc[index].get('username')),
+                title: Text(availbleuser[index].get('username')),
                 trailing: FlatButton.icon(
                     onPressed: () {
                       // from data we can get documentID and use get(field) to get the value of field
-                      chat(userdoc[index].documentID, context); // get is get the field
+                      chat(availbleuser[index].id, context); // get is get the field
                       // to start message
                     } ,
                     icon: Icon(Icons.mail_outline),
                     label: Text("Message")),
-              ): null;
+              );
             },);
         },
       )

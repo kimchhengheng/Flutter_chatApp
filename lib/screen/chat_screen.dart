@@ -16,6 +16,7 @@ class ChatScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+//    print('messages builder');
     return Scaffold(
       appBar: AppBar(
         title: Text("chat app"),
@@ -35,7 +36,11 @@ class ChatScreen extends StatelessWidget {
               )
             ],
             onChanged: (value) {
+              // when the user click sign out the page of chat screen still load
+              // when use click on the message it push the chat screen on the all user screen, but i dont know why when sign out still try to display the message again
+              Navigator.of(context).pop(); // we have to pop here since this screen is push on the top of the all user so if you dont pop even the streambuilder change of auth still display this screen
               FirebaseAuth.instance.signOut();
+
                 // log out
             },)
         ],

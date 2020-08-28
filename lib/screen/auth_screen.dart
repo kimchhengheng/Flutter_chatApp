@@ -16,17 +16,19 @@ class AuthScreen extends StatefulWidget {
 
 class _AuthScreenState extends State<AuthScreen> {
   bool _isloading=false;
+  FirebaseAuth _auth= FirebaseAuth.instance;
+
 
   Future _handlesaveform(String userEmail, String username, String userPassword, File imagefile, BuildContext ctx) async {
 
-    FirebaseAuth _auth= FirebaseAuth.instance;
+
     UserCredential _response;
     try{
       setState(() {
         _isloading=true;
       });
       if(username == null){
-        print("statt create user");
+//        print("start create user");
         _response = await _auth.signInWithEmailAndPassword(email: userEmail, password: userPassword);
 
       }
@@ -44,11 +46,11 @@ class _AuthScreenState extends State<AuthScreen> {
           'imageurl': _imageurl,
         });
       }
-      setState(() {
-        _isloading=false;
-      });
+//      setState(() { // you dont need to call set state since it would navigate to another page already
+//        _isloading=false;
+//      });
 
-    } on PlatformException catch(error){
+    } catch(error){
       if(error.message !=null){
         Scaffold.of(ctx).showSnackBar(
             SnackBar(
@@ -61,12 +63,14 @@ class _AuthScreenState extends State<AuthScreen> {
       }
 
     }
-    catch(error){
-      print(error);
-      setState(() {
-        _isloading=false;
-      });
-    }
+//    catch(error){
+//      print("catch error auth screen"); // show snack bar
+//      print(error);
+//      if (!mounted) return;
+//      setState(() {// this cause the problem call setstate when it already mounted
+//        _isloading=false;
+//      });
+//    }
 
 
 }

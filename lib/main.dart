@@ -31,6 +31,8 @@ class MyApp extends StatelessWidget {
       home: StreamBuilder(
         stream: FirebaseAuth.instance.authStateChanges(), // this listen to change of firebaseAuth login logout sign up
         builder: (context, snapshot) {
+//          print('auth change builder');
+//          print(snapshot);
           if(snapshot.hasData){
             return DisplayUser(); //ChatScreen() ;
           }

@@ -23,16 +23,13 @@ class _MessagesState extends State<Messages> {
     _currentuser =  FirebaseAuth.instance.currentUser;
 //    print(FirebaseFirestore.instance.collection('Users').get());
 //    FirebaseFirestore.instance.collection('Users').get().then((value) =>print(value.getDocuments())); query snapshot does not have the getDocuments
-
-
-
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
 //    print(_currentuser.uid);
-    print(widget.chatId);
+//    print(widget.chatId);
 
     return StreamBuilder(
       // we dont have to add listen since the streambuilder handle it already
@@ -42,9 +39,15 @@ class _MessagesState extends State<Messages> {
           if(streamSnapshot.connectionState == ConnectionState.waiting){
             return Center(child: CircularProgressIndicator(),);
           }
-          final documents =  streamSnapshot.data.docs;
+          if(streamSnapshot.data == null){ // the problem is the stream does not close when the log out
+//            print('snapdata null'); this stream still listen even after the logout is fired
+            return Center(child: Text("No message , Start sent now "),);
 
-          return documents!=null? ListView.builder(
+          }
+
+
+          final documents =  streamSnapshot.data.docs;
+          return ListView.builder(
             reverse: true,
             itemCount:documents.length,
             itemBuilder: (context, index) {
@@ -60,7 +63,7 @@ class _MessagesState extends State<Messages> {
 
               );
             },
-          ): null;
+          );
         }
     );
   }

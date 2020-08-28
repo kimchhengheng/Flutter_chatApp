@@ -31,7 +31,7 @@ class _NewMessageState extends State<NewMessage> {
     super.dispose();
   }
   Future<void> _sendMessage()async{
-      print(widget.chatId);
+//      print(widget.chatId);
 
       FocusScope.of(context).unfocus();
       final _authuser =await FirebaseAuth.instance.currentUser;
